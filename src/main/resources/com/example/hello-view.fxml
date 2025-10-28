@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
 
-<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.HelloController">
-    <children>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+
+<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.example.HelloController">
+    <VBox alignment="CENTER">
         <Label fx:id="messageLabel" text="Hello, JavaFX!" />
-    </children>
+        <Label fx:id="currentDateAndTime" text="" />
+        <Button fx:id="updateButton" text="Update" onAction="#updateButtonAction" />
+
+    </VBox>
 </StackPane>

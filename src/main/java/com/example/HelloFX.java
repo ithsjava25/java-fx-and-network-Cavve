@@ -11,15 +11,16 @@ public class HelloFX extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloFX.class.getResource("hello-view.fxml"));
+        //root objekt ,  som har flera parent noder som också har lövnoder, children
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, 640, 480);
         stage.setTitle("Hello MVC");
+        //olika vyer, kan byta scene för att ändra utseende
         stage.setScene(scene);
         stage.show();
     }
 
-    public static void main(String[] args) {
-        launch();
+    public static void main(String[] args) {launch(); //anropar launch metoden i application klassen
     }
 
 }
