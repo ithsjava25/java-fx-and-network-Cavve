@@ -14,6 +14,8 @@ import java.time.format.DateTimeFormatter;
  */
 public class HelloController {
 
+    //hantera användarinteraktion
+
     private final HelloModel model = new HelloModel();
 
     @FXML
@@ -23,6 +25,8 @@ public class HelloController {
     private Label currentDateAndTime;
 
     public Button updateButton;
+
+    public Button SendMessageButton;
 
     @FXML
     private void initialize() {
@@ -37,6 +41,10 @@ public class HelloController {
         public void updateButtonAction(ActionEvent actionEvent) {
             currentDateAndTime.setText(LocalDateTime.now()
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+
+        public void sendMessageAction(ActionEvent actionEvent) {
+
         }
     }
 

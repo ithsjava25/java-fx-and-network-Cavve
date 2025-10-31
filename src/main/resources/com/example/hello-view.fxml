@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.Label?>
@@ -10,6 +9,7 @@
     <VBox alignment="CENTER">
         <Label fx:id="messageLabel" text="Hello, JavaFX!" />
         <Label fx:id="currentDateAndTime" text="" />
+        <Button fx:id="SendMessageButton" text="Send Message" onAction="#sendMessageAction" />
         <Button fx:id="updateButton" text="Update" onAction="#updateButtonAction" />
 
     </VBox>

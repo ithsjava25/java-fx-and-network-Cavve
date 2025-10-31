@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class HelloFX extends Application {
+//startar appen och laddar fxml filen
 
     @Override
     public void start(Stage stage) throws Exception {

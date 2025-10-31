@@ -7,6 +7,9 @@ public class HelloModel {
     /**
      * Returns a greeting based on the current Java and JavaFX versions.
      */
+    //contains business logic
+    //skicka meddelande till ntfy och ta emot nya
+
     public String getGreeting() {
         String javaVersion = System.getProperty("java.version");
         String javafxVersion = System.getProperty("javafx.version");
