@@ -21,12 +21,3 @@ SKA INTE COMITTA TILL MAIN
 SKAPA NY BRANCH OCH COMITTA DÄR - LABB 3
 
 MERGA ENDAST NÄR LABBEN ÄR GODKÄND
-
-1. Skapa GUI
-   2. TextArea - ListView för chatthistorik?
-   3. TextField - Skriver meddelande
-   4. Button - skicka meddelande
-2. HelloController
-   3. hämta texten från textfield
-   4. anropa
-3. HelloModel

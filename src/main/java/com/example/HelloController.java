@@ -2,12 +2,10 @@ package com.example;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * Controller layer: mediates between the view (FXML) and the model.
@@ -16,36 +14,37 @@ public class HelloController {
 
     //hantera användarinteraktion
 
-    private final HelloModel model = new HelloModel();
+    private NtfyConnection connection;
+    private final HelloModel model = new HelloModel(new NtfyConnectionImpl());
 
-    @FXML
-    private Label messageLabel;
-
-    @FXML
-    private Label currentDateAndTime;
-
-    public Button updateButton;
-
-    public Button SendMessageButton;
+    public TextArea ChatArea;
+    public TextField messageField;
+    public ListView<NtfyMessageDto> messageView;
 
     @FXML
     private void initialize() {
-        if (messageLabel != null) {
-            messageLabel.setText(model.getGreeting());
-        }
-        if (currentDateAndTime != null)
-            currentDateAndTime.setText(LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        }
+        ChatArea.appendText("Hello World!\n");
+        // Inkludera Enter som input för att skicka meddelanden för jag är lat
+        messageField.setOnKeyPressed(event -> {
+            if (Objects.requireNonNull(event.getCode()) == KeyCode.ENTER) {
+                onSendClicked(null);
+                event.consume();
+            }
+        });
+        messageView.setItems(model.getMessages());
+    }
 
-        public void updateButtonAction(ActionEvent actionEvent) {
-            currentDateAndTime.setText(LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        }
+    @FXML
+    public void onSendClicked(ActionEvent actionEvent) {
+        String message = messageField.getText();
 
-        public void sendMessageAction(ActionEvent actionEvent) {
-
+        if (!message.isEmpty()) {
+            model.sendMessage();
+            ChatArea.appendText("You: " + message + "\n");
+            messageField.clear();
         }
     }
+}
+
 
 
