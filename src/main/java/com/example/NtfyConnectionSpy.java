@@ -17,3 +17,8 @@ public class NtfyConnectionSpy implements NtfyConnection {
 
     }
 }
+
+/*
+testdubb som låtsas vara riktiga NtfyConnection, men utan att prata med nätet
+Observerar vad som händer utan att påverka
+ */

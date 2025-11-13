@@ -27,7 +27,7 @@ public class HelloController {
         // Inkludera Enter som input för att skicka meddelanden för jag är lat
         messageField.setOnKeyPressed(event -> {
             if (Objects.requireNonNull(event.getCode()) == KeyCode.ENTER) {
-                onSendClicked(null);
+                sendMessage(null);
                 event.consume();
             }
         });
@@ -35,11 +35,13 @@ public class HelloController {
     }
 
     @FXML
-    public void onSendClicked(ActionEvent actionEvent) {
+    public void sendMessage(ActionEvent actionEvent) {
         String message = messageField.getText();
 
-        if (!message.isEmpty()) {
+        if (message != null && !message.isBlank()) {
+            model.setMessageToSend(message);
             model.sendMessage();
+
             ChatArea.appendText("You: " + message + "\n");
             messageField.clear();
         }

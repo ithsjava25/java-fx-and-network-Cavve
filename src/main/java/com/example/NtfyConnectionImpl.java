@@ -28,9 +28,14 @@ public class NtfyConnectionImpl implements NtfyConnection {
 
     @Override
     public boolean send(String message) {
+        //villkor för felhantering
+        if (message == null || message.isBlank()) {
+            System.out.println("Error: message is null or blank");
+            return false;
+        }
+
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(message))
-                .header("Cache", "no")
                 .uri(URI.create(hostName + "/mytopic"))
                 .build();
         try {
@@ -48,8 +53,11 @@ public class NtfyConnectionImpl implements NtfyConnection {
     }
 
     @Override
+    //använd stub för att skapa fake server och se om vi tar emot något
     public void receive(Consumer<NtfyMessageDto> messageHandler) {
         HttpRequest httpRequest = HttpRequest.newBuilder()
+                // Gör en GET till /mytopic/json, läser varje rad som JSON, tolkar den till NtfyMessageDto
+                // och skickar vidare till messageHandler
                 .GET()
                 .uri(URI.create(hostName + "/mytopic/json"))
                 .build();

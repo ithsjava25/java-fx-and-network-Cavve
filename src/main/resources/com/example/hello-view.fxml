@@ -11,7 +11,7 @@
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;">
             <TextField fx:id="messageField" HBox.hgrow="ALWAYS" />
-            <Button onAction="#onSendClicked" text="sendMessage" />
+            <Button onAction="#sendMessage" text="sendMessage" />
         </HBox>
     </bottom>
 
