@@ -3,23 +3,20 @@ package com.example;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
+
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+
 import javafx.geometry.Insets;
 
 import java.awt.*;
 import java.io.File;
 import java.net.URI;
-import java.nio.file.Path;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.Objects;
 
 /**

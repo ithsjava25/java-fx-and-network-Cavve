@@ -11,8 +11,4 @@ public record NtfyMessageDto(String id, long time, String event, String topic, S
         return attachment != null ? attachment.url() : null;
     }
 
-    public String fileName() {
-        return fileName;
-    }
-
 }
