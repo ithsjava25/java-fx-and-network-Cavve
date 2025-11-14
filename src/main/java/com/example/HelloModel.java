@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -69,8 +70,12 @@ public class HelloModel {
         connection.receive(m -> runOnFx(() -> messages.add(m)));
     }
 
-    
+    public void sendFile (File file) {
+        connection.sendFile(file);
+    }
 
 
-
+    public boolean downloadFile(String topic, String fileName, File destination) {
+        return connection.downloadFile(topic, fileName, destination);
+    }
 }

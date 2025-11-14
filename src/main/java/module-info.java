@@ -5,6 +5,7 @@ module hellofx {
     requires io.github.cdimascio.dotenv.java;
     requires tools.jackson.databind;
     requires javafx.graphics;
+    requires java.desktop;
 
     opens com.example to javafx.fxml;
     exports com.example;

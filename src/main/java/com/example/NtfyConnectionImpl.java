@@ -54,23 +54,39 @@ public class NtfyConnectionImpl implements NtfyConnection {
         return false;
     }
 
-    public boolean sendFile(File file) throws FileNotFoundException {
+    public boolean sendFile(File file) {
         if (file == null || !file.exists()) {
             System.out.println("Error: file is null");
             return false;
         }
 
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .PUT(HttpRequest.BodyPublishers.ofFile(file.toPath()))
-                .uri(URI.create(hostName + "/mytopic"))
-                .header("Filename", file.getName())
+        try {
+            HttpRequest httpRequest = HttpRequest.newBuilder()
+                    .PUT(HttpRequest.BodyPublishers.ofFile(file.toPath()))
+                    .uri(URI.create(hostName + "/mytopic"))
+                    .header("Filename", file.getName())
+                    .build();
+
+            http.send(httpRequest, HttpResponse.BodyHandlers.discarding());
+            return true;
+
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error sending file: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean downloadFile(String topic, String fileName, File destination) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(hostName + "/" + topic + "/" + fileName))
                 .build();
 
         try {
-            http.send(httpRequest, HttpResponse.BodyHandlers.discarding());
+            http.send(request, HttpResponse.BodyHandlers.ofFile(destination.toPath()));
             return true;
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error sending file: " + e.getMessage());
+            System.out.println("Error downloading file: " + e.getMessage());
             return false;
         }
     }

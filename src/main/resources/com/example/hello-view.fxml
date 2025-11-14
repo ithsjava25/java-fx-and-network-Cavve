@@ -3,10 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.HelloController">
+<BorderPane prefHeight="236.0" prefWidth="593.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.HelloController">
 
     <center>
-        <TextArea fx:id="ChatArea" editable="false" prefHeight="191.0" prefWidth="227.0" wrapText="true" />
+        <TextArea fx:id="ChatArea" editable="false" prefHeight="191.0" prefWidth="25.0" wrapText="true" />
     </center>
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;">
@@ -19,9 +19,9 @@
 
    <BorderPane prefHeight="200.0" prefWidth="200.0" />
    <right>
-      <HBox prefHeight="191.0" prefWidth="209.0" BorderPane.alignment="CENTER_RIGHT">
+      <HBox prefHeight="191.0" prefWidth="340.0" BorderPane.alignment="CENTER_RIGHT">
          <children>
-            <ListView fx:id="messageView" prefHeight="181.0" prefWidth="239.0" />
+            <ListView fx:id="messageView" prefHeight="191.0" prefWidth="355.0" />
          </children>
       </HBox>
    </right>
