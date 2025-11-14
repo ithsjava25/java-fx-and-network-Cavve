@@ -27,6 +27,11 @@ public class NtfyConnectionSpy implements NtfyConnection {
         }
         return false;
     }
+
+    @Override
+    public boolean downloadFile(String topic, String fileName, File destination) {
+        return false;
+    }
 }
 
 /*

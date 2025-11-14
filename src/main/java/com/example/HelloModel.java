@@ -74,8 +74,4 @@ public class HelloModel {
         connection.sendFile(file);
     }
 
-
-    public boolean downloadFile(String topic, String fileName, File destination) {
-        return connection.downloadFile(topic, fileName, destination);
-    }
 }

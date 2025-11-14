@@ -18,6 +18,8 @@ import java.awt.*;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Objects;
 
 /**
@@ -51,50 +53,47 @@ public class HelloController {
 
         messageView.setCellFactory(listView -> new ListCell<>() {
             @Override
-            protected void updateItem(NtfyMessageDto message, boolean empty) {
-                super.updateItem(message, empty);
+            protected void updateItem(NtfyMessageDto item, boolean empty) {
+                super.updateItem(item, empty);
 
-                if (empty || message == null) {
+                if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
                     return;
                 }
 
-                // HBox-container för meddelande + knapp
-                HBox container = new HBox(10);
-                container.setPadding(new Insets(5, 10, 5, 10));
+                VBox container = new VBox(4);
 
-                // Label med topic och meddelande
-                Label msgLabel = new Label("[" + message.topic() + "] " + message.message());
-                msgLabel.setWrapText(true);
-                msgLabel.setMaxWidth(300);
-                container.getChildren().add(msgLabel);
+                Label topicLabel = new Label(item.topic());
+                topicLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #F48C2A;");
 
-                // Om det finns en fil att ladda ned
-                if (message.attachmentUrl() != null && !message.attachmentUrl().isEmpty()) {
-                    Button downloadBtn = new Button("Download File");
-                    downloadBtn.setOnAction(e -> {
-                        FileChooser fileChooser = new FileChooser();
-                        // Förslag på filnamn
-                        fileChooser.setInitialFileName(message.fileName() != null ? message.fileName() : "attachment");
+                Label messageLabel = new Label(item.message());
+                messageLabel.setWrapText(true);
 
-                        File dest = fileChooser.showSaveDialog(getScene().getWindow());
-                        if (dest != null) {
-                            // Låt modellen hantera nedladdningen
-                            boolean success = model.downloadFile(message.topic(), message.fileName(), dest);
-                            if (!success) {
-                                Alert alert = new Alert(Alert.AlertType.ERROR);
-                                alert.setTitle("Download Error");
-                                alert.setContentText("Failed to download file: " + message.fileName());
-                                alert.showAndWait();
-                            }
+                container.getChildren().addAll(topicLabel, messageLabel);
+
+                // Om fil finns, lägg till Hyperlink
+                if (item.attachmentUrl() != null && !item.attachmentUrl().isEmpty()) {
+                    Hyperlink downloadLink = new Hyperlink("Download File");
+                    downloadLink.setOnAction(e -> {
+                        try {
+                            Desktop.getDesktop().browse(new URI(item.attachmentUrl()));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error opening link");
+                            alert.setContentText("Could not open attachment: " + ex.getMessage());
+                            alert.showAndWait();
                         }
                     });
-                    container.getChildren().add(downloadBtn);
+                    container.getChildren().add(downloadLink);
                 }
 
+                container.setPadding(new Insets(8));
+                container.setStyle("-fx-background-color: #f5f5f5; -fx-background-radius: 6;");
+
                 setGraphic(container);
-                setText(null); // text sätts till null eftersom vi använder graphic
+                setText(null); // text används ej
             }
         });
     }

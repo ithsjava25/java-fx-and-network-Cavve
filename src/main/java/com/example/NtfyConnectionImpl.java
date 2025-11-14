@@ -76,20 +76,6 @@ public class NtfyConnectionImpl implements NtfyConnection {
         }
     }
 
-    public boolean downloadFile(String topic, String fileName, File destination) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(hostName + "/" + topic + "/" + fileName))
-                .build();
-
-        try {
-            http.send(request, HttpResponse.BodyHandlers.ofFile(destination.toPath()));
-            return true;
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Error downloading file: " + e.getMessage());
-            return false;
-        }
-    }
 
     @Override
     //använd stub för att skapa fake server och se om vi tar emot något

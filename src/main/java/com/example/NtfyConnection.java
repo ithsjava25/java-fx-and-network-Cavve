@@ -11,6 +11,4 @@ public interface NtfyConnection {
 
     public boolean sendFile(File file);
 
-    boolean downloadFile(String topic, String fileName, File destination);
-
 }
