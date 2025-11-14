@@ -3,6 +3,8 @@ package com.example;
 import io.github.cdimascio.dotenv.Dotenv;
 import tools.jackson.databind.ObjectMapper;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -50,6 +52,27 @@ public class NtfyConnectionImpl implements NtfyConnection {
             System.out.println("Interruped sending message");
         }
         return false;
+    }
+
+    public boolean sendFile(File file) throws FileNotFoundException {
+        if (file == null || !file.exists()) {
+            System.out.println("Error: file is null");
+            return false;
+        }
+
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .PUT(HttpRequest.BodyPublishers.ofFile(file.toPath()))
+                .uri(URI.create(hostName + "/mytopic"))
+                .header("Filename", file.getName())
+                .build();
+
+        try {
+            http.send(httpRequest, HttpResponse.BodyHandlers.discarding());
+            return true;
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Error sending file: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override

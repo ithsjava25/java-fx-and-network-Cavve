@@ -3,6 +3,7 @@ package com.example;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import javafx.css.Size;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +43,30 @@ class HelloModelTest {
 
     }
 
+    @Test
+    void receiveMessagesFromFakeServer(WireMockRuntimeInfo wmRunTimeInfo) throws InterruptedException {
+        // ------------------------ ARRANGE Given ------------------------
+        //startar fake server
+        var con = new NtfyConnectionImpl("http://localhost:" + wmRunTimeInfo.getHttpPort());
+        var model = new HelloModel(con);
+
+        String jsonMessage = """
+            {"id":"123","time":123456789,"event":"message","topic":"mytopic","message":"Hello from server"}
+            """;
+
+        stubFor(get(urlEqualTo("/mytopic/json"))
+                .willReturn(okForContentType("application/json", jsonMessage)));
+
+        model.receiveMessage();
+
+        Thread.sleep(500);
+        assertThat(model.getMessages().size()).isEqualTo(1);
+        var dto = model.getMessages().getFirst();
+        assertThat(dto.message()).isEqualTo("Hello from server");
+
+        verify(getRequestedFor(urlEqualTo("/mytopic/json")));
+    }
+
     //skapar fake-connection (spy)
     //Testet ska verifiera att: När WireMock skickar tillbaka en JSON-rad med ett meddelande
     // så anropas messageHandler.accept med rätt data
@@ -49,7 +74,8 @@ class HelloModelTest {
     @Test
     @DisplayName("When Receiving JSON messages from fake server, then messageHandler should be called with correct content")
     void receiveMessageToFakeServer(WireMockRuntimeInfo wmRunTimeInfo) throws InterruptedException {
-        //ARRANGE
+
+        // ------------------------ ARRANGE Given ------------------------
         //startar fake server
         var con = new NtfyConnectionImpl("http://localhost:" + wmRunTimeInfo.getHttpPort());
 
@@ -72,8 +98,7 @@ class HelloModelTest {
         //skapar egen flagga för att kolla om messageHandler anropas
         final boolean[] wasCalled = {false};
 
-
-        //ACT
+        // ------------------------ ACT When ------------------------
         //anropa dto och dto ska innehålla rätt data från JSON.et
         con.receive(dto -> {
             wasCalled[0] = true;
@@ -84,8 +109,7 @@ class HelloModelTest {
         // Vänta lite för att låta async-operationen hända
         Thread.sleep(500);
 
-
-        //ASSERT
+        // ------------------------ ASSERT Then ------------------------
         //verifiera att messageHandler verkligen anropades
         assertThat(wasCalled[0])
                 .as("messageHandler should have been called with parsed message")

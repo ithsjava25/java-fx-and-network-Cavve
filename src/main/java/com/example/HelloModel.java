@@ -6,6 +6,10 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+
 /**
  * Model layer: encapsulates application data and business logic.
  */
@@ -51,7 +55,22 @@ public class HelloModel {
 
     }
 
-    public void receiveMessage() {
-        connection.receive(m -> Platform.runLater(() -> messages.add(m)));
+    private static void runOnFx(Runnable task) {
+        try {
+            if (Platform.isFxApplicationThread()) task.run();
+            else Platform.runLater(task);
+        } catch (IllegalStateException notInitialized) {
+            // JavaFX toolkit not initialized (e.g., unit tests): run inline
+            task.run();
+        }
     }
+
+    public void receiveMessage() {
+        connection.receive(m -> runOnFx(() -> messages.add(m)));
+    }
+
+    
+
+
+
 }

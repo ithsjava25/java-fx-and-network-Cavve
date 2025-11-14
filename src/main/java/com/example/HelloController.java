@@ -4,7 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 
 /**
@@ -12,10 +16,15 @@ import java.util.Objects;
  */
 public class HelloController {
 
+    public Label messageLabel;
+
     //hantera användarinteraktion
 
     private NtfyConnection connection;
     private final HelloModel model = new HelloModel(new NtfyConnectionImpl());
+
+    @FXML
+    private File attachedFile;
 
     public TextArea ChatArea;
     public TextField messageField;
@@ -46,7 +55,23 @@ public class HelloController {
             messageField.clear();
         }
     }
-}
+
+    public void sendFile(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose file to attach");
+        File selectedFile = fileChooser.showOpenDialog(messageField.getScene().getWindow());
+
+
+        if (selectedFile != null) {
+//            attachedFile = selectedFile;
+            messageLabel.setText("File selected: " + selectedFile.getName());
+        } else {
+            messageLabel.setText("No File Selected");
+        }
+    }
+
+    }
+
 
 
 
