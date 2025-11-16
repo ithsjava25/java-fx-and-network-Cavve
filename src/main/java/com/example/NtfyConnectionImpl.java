@@ -66,11 +66,14 @@ public class NtfyConnectionImpl implements NtfyConnection {
                     .header("Filename", file.getName())
                     .build();
 
-            http.send(httpRequest, HttpResponse.BodyHandlers.discarding());
-            return true;
+            var response =  http.send(httpRequest, HttpResponse.BodyHandlers.discarding());
+            return response.statusCode() >= 200 && response.statusCode() < 300;
 
         } catch (IOException | InterruptedException e) {
-            System.out.println("Error sending file: " + e.getMessage());
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            System.out.println("Error sending file" + e.getMessage());
             return false;
         }
     }
