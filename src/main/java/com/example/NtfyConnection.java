@@ -6,10 +6,10 @@ import java.util.function.Consumer;
 
 public interface NtfyConnection {
 
-    public CompletableFuture<Boolean> send(String message);
+    CompletableFuture<Boolean> send(String message);
 
-    public void receive(Consumer<NtfyMessageDto> messageHandler);
+    void receive(Consumer<NtfyMessageDto> messageHandler);
 
-    public boolean sendFile(File file);
+    CompletableFuture<Boolean> sendFile(File file);
 
 }

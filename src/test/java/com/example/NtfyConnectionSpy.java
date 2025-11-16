@@ -21,12 +21,12 @@ public class NtfyConnectionSpy implements NtfyConnection {
     }
 
     @Override
-    public boolean sendFile(File file) {
+    public CompletableFuture<Boolean> sendFile(File file) {
         this.sentFile = file;
         if (file == null || !file.exists()) {
             System.out.println("File does not exist");
         }
-        return false;
+        return CompletableFuture.completedFuture(false);
     }
 }
 

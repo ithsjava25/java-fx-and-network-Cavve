@@ -62,29 +62,30 @@ public class NtfyConnectionImpl implements NtfyConnection {
                 });
     }
 
-    public boolean sendFile(File file) {
+    public CompletableFuture<Boolean> sendFile(File file) {
         if (file == null || !file.exists()) {
             System.out.println("Error: file is null");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
+        HttpRequest httpRequest;
         try {
-            HttpRequest httpRequest = HttpRequest.newBuilder()
+            httpRequest = HttpRequest.newBuilder()
                     .PUT(HttpRequest.BodyPublishers.ofFile(file.toPath()))
                     .uri(URI.create(hostName + "/mytopic"))
                     .header("Filename", file.getName())
                     .build();
-
-            var response =  http.send(httpRequest, HttpResponse.BodyHandlers.discarding());
-            return response.statusCode() >= 200 && response.statusCode() < 300;
-
-        } catch (IOException | InterruptedException e) {
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
+        } catch (IOException e) {
             System.out.println("Error sending file" + e.getMessage());
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
+
+        return http.sendAsync(httpRequest, HttpResponse.BodyHandlers.discarding())
+                .thenApply(response -> response.statusCode() >= 200 && response.statusCode() < 300)
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    return false;
+                });
     }
 
 
