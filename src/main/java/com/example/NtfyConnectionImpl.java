@@ -31,7 +31,7 @@ public class NtfyConnectionImpl implements NtfyConnection {
         }
 
         try {
-            URI.create(hostName);
+            URI.create(hostName); //kastar exception om ogiltig
         } catch (Exception e){
             throw new IllegalArgumentException("hostName is invalid" + hostName);
         }
