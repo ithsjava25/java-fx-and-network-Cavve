@@ -19,6 +19,8 @@ import java.io.File;
 import java.net.URI;
 import java.util.Objects;
 
+import static com.example.HelloModel.runOnFx;
+
 /**
  * Controller layer: mediates between the view (FXML) and the model.
  */
@@ -103,10 +105,17 @@ public class HelloController {
 
         if (message != null && !message.isBlank()) {
             model.setMessageToSend(message);
-            model.sendMessage();
 
-            ChatArea.appendText("You: " + message + "\n");
-            messageField.clear();
+            model.sendMessage().thenAccept(success -> {
+                runOnFx(() -> {
+                    if (success) {
+                        ChatArea.appendText("You: " + message + "\n");
+                        messageField.clear();
+                    } else {
+                        ChatArea.appendText("Failed to send message: " + message + "\n");
+                    }
+                });
+            });
         }
     }
 
@@ -119,15 +128,21 @@ public class HelloController {
         if (selectedFile != null) {
             messageLabel.setText("File selected: " + selectedFile.getName());
 
-            model.sendFile(selectedFile);
+            model.sendFile(selectedFile).thenAccept(success -> {
+                runOnFx(() -> {
+                    if (success) {
+                        ChatArea.appendText("File sent: " + selectedFile.getName() + "\n");
+                    } else {
+                        ChatArea.appendText("Failed to send file: " + selectedFile.getName() + "\n");
+                    }
+                });
+            });
+
         } else {
             messageLabel.setText("No File Selected");
         }
     }
-
-
-
-    }
+}
 
 
 

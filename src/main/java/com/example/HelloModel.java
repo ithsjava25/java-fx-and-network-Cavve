@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Model layer: encapsulates application data and business logic.
@@ -48,12 +49,15 @@ public class HelloModel {
         return "Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".";
     }
 
-    public void sendMessage() {
-        connection.send(messageToSend.get());
-
+    public CompletableFuture<Boolean> sendMessage() {
+        String msg = messageToSend.get();
+        if (msg == null || msg.isBlank()) {
+            return CompletableFuture.completedFuture(false);
+        }
+        return connection.send(msg);
     }
 
-    private static void runOnFx(Runnable task) {
+    static void runOnFx(Runnable task) {
         try {
             if (Platform.isFxApplicationThread()) task.run();
             else Platform.runLater(task);
@@ -67,8 +71,8 @@ public class HelloModel {
         connection.receive(m -> runOnFx(() -> messages.add(m)));
     }
 
-    public void sendFile (File file) {
-        connection.sendFile(file);
+    public CompletableFuture<Boolean> sendFile (File file) {
+        return connection.sendFile(file);
     }
 
 }

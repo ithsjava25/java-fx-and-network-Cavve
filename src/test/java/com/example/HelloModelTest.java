@@ -27,7 +27,7 @@ class HelloModelTest {
         //Act - When
         model.sendMessage();
         //Assert - Then
-        assertThat(spy.message).isEqualTo("Hello World");
+        assertThat(spy.getMessage()).isEqualTo("Hello World");
     }
 
     @Test
@@ -37,7 +37,7 @@ class HelloModelTest {
         model.setMessageToSend("Hello World");
         stubFor(post("/mytopic").willReturn(ok()));
 
-        model.sendMessage();
+        model.sendMessage().join();
 
         //Verify call made to server
         verify(postRequestedFor(urlEqualTo("/mytopic"))

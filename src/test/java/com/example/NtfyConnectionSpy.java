@@ -6,9 +6,17 @@ import java.util.function.Consumer;
 
 public class NtfyConnectionSpy implements NtfyConnection {
 
-    String message;
-    File sentFile;
+    private String message;
+    private File sentFile;
 
+    public String getMessage(){
+        return message;
+    }
+
+    public File getSentFile(){
+        return sentFile;
+    }
+    
     @Override
     public CompletableFuture<Boolean> send(String message) {
         this.message = message;
