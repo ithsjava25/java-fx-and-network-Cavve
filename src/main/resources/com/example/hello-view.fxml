@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Label?>
 
-<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.HelloController">
-    <children>
-        <Label fx:id="messageLabel" text="Hello, JavaFX!" />
-    </children>
-</StackPane>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="319.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.HelloController">
+
+    <center>
+        <TextArea fx:id="ChatArea" editable="false" prefHeight="274.0" prefWidth="343.0" wrapText="true" />
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;">
+            <TextField fx:id="messageField" HBox.hgrow="ALWAYS" />
+            <Label fx:id="messageLabel" text="Status messages" />
+            <Button onAction="#sendMessage" text="sendMessage" />
+            <Button onAction="#sendFile" text="sendFile" />
+        </HBox>
+    </bottom>
+
+   <BorderPane prefHeight="200.0" prefWidth="200.0" />
+   <right>
+      <HBox prefHeight="274.0" prefWidth="546.0" BorderPane.alignment="CENTER_RIGHT">
+         <children>
+            <ListView fx:id="messageView" prefHeight="274.0" prefWidth="557.0" />
+         </children>
+      </HBox>
+   </right>
+</BorderPane>

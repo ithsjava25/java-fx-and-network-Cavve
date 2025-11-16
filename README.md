@@ -16,3 +16,8 @@ A JavaFX-based chat client using [ntfy](https://docs.ntfy.sh/) for backend messa
 2. Start with:
    ```bash
    ./mvnw clean javafx:run
+
+SKA INTE COMITTA TILL MAIN
+SKAPA NY BRANCH OCH COMITTA DÄR - LABB 3
+
+MERGA ENDAST NÄR LABBEN ÄR GODKÄND
