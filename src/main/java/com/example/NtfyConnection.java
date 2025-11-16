@@ -1,11 +1,12 @@
 package com.example;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public interface NtfyConnection {
 
-    public boolean send(String message);
+    public CompletableFuture<Boolean> send(String message);
 
     public void receive(Consumer<NtfyMessageDto> messageHandler);
 

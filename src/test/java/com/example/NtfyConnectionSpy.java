@@ -1,6 +1,7 @@
 package com.example;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class NtfyConnectionSpy implements NtfyConnection {
@@ -9,9 +10,9 @@ public class NtfyConnectionSpy implements NtfyConnection {
     File sentFile;
 
     @Override
-    public boolean send(String message) {
+    public CompletableFuture<Boolean> send(String message) {
         this.message = message;
-        return false;
+        return CompletableFuture.completedFuture(false);
     }
 
     @Override

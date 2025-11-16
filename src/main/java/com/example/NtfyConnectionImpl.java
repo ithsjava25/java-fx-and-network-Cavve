@@ -4,12 +4,12 @@ import io.github.cdimascio.dotenv.Dotenv;
 import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class NtfyConnectionImpl implements NtfyConnection {
@@ -24,33 +24,42 @@ public class NtfyConnectionImpl implements NtfyConnection {
     }
 
     public NtfyConnectionImpl(String hostName) {
+        Objects.requireNonNull(hostName, "hostName cannot be null");
+
+        if (hostName.isBlank()) {
+            throw new IllegalArgumentException("hostName cannot be blank");
+        }
+
+        try {
+            URI.create(hostName);
+        } catch (Exception e){
+            throw new IllegalArgumentException("hostName is invalid" + hostName);
+        }
         this.hostName = hostName;
     }
 
     @Override
-    public boolean send(String message) {
+    public CompletableFuture<Boolean> send(String message) {
         //villkor för felhantering
         if (message == null || message.isBlank()) {
             System.out.println("Error: message is null or blank");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(message))
                 .uri(URI.create(hostName + "/mytopic"))
                 .build();
-        try {
-            //Todo: handle long blocking send requests to not freeze the JavaFX thread
-            //1. Use thread send message?
-            //2. Use async?
-            var reponse = http.send(httpRequest, HttpResponse.BodyHandlers.discarding());
-            return true;
-        } catch (IOException e) {
-            System.out.println("Error sending message");
-        } catch (InterruptedException e) {
-            System.out.println("Interruped sending message");
-        }
-        return false;
+
+        return http.sendAsync(httpRequest, HttpResponse.BodyHandlers.discarding())
+                .thenApply(response -> {
+                    int code = response.statusCode();
+                    return code >= 200 && code < 300;
+                })
+                .exceptionally(ex -> {
+                    System.out.println("Error sending message: " + ex.getMessage());
+                    return false;
+                });
     }
 
     public boolean sendFile(File file) {
