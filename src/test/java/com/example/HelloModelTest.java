@@ -1,15 +1,17 @@
 package com.example;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import javafx.css.Size;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @WireMockTest
 class HelloModelTest {
@@ -29,7 +31,7 @@ class HelloModelTest {
     }
 
     @Test
-    void sendMessageToFakeServer(WireMockRuntimeInfo wmRunTimeInfo){
+    void sendMessageToFakeServer(WireMockRuntimeInfo wmRunTimeInfo) {
         var con = new NtfyConnectionImpl("http://localhost:" + wmRunTimeInfo.getHttpPort());
         var model = new HelloModel(con);
         model.setMessageToSend("Hello World");
@@ -58,8 +60,8 @@ class HelloModelTest {
         //Förbereder ett meddelande som ntfy ska skicka
         //typiskt meddelande som ntfy skickar tillbaka
         String jsonMessage = """
-            {"id":"123","time":123456789,"event":"message","topic":"mytopic","message":"Hello from server"}
-            """;
+                {"id":"123","time":123456789,"event":"message","topic":"mytopic","message":"Hello from server"}
+                """;
 
         //vi stubbar wiremock så att när någon gör GET till mytopic
         //så svarar servern med vår JSON-rad och content-type
@@ -71,26 +73,44 @@ class HelloModelTest {
                         .withBody(jsonMessage)
                 ));
 
-        //skapar egen flagga för att kolla om messageHandler anropas
-        final boolean[] wasCalled = {false};
+
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<AssertionError> assertionErrorRef = new AtomicReference<>();
+        AtomicBoolean wasCalled = new AtomicBoolean(false);
 
         // ------------------------ ACT When ------------------------
         //anropa dto och dto ska innehålla rätt data från JSON.et
         con.receive(dto -> {
-            wasCalled[0] = true;
-            assertThat(dto.message()).isEqualTo("Hello from server");
-            assertThat(dto.topic()).isEqualTo("mytopic");
+            try {
+                wasCalled.set(true);
+
+                assertThat(dto.message()).isEqualTo("Hello from server");
+                assertThat(dto.topic()).isEqualTo("mytopic");
+            } catch (AssertionError e) {
+                assertionErrorRef.set(e);
+            } finally {
+                latch.countDown();
+            }
         });
 
+        boolean completed = latch.await(2, TimeUnit.SECONDS);
         // Vänta lite för att låta async-operationen hända
-        Thread.sleep(500);
+
 
         // ------------------------ ASSERT Then ------------------------
         //verifiera att messageHandler verkligen anropades
-        assertThat(wasCalled[0])
+        assertThat(completed)
+                .as("messageHandler should have been called within timeout")
+                .isTrue();
+
+        if (assertionErrorRef.get() != null) {
+            throw assertionErrorRef.get();
+        }
+
+        assertThat(wasCalled.get())
                 .as("messageHandler should have been called with parsed message")
                 .isTrue();
-    }
 
+    }
 }
 

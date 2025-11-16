@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -78,19 +79,34 @@ public class NtfyConnectionImpl implements NtfyConnection {
     @Override
     //använd stub för att skapa fake server och se om vi tar emot något
     public void receive(Consumer<NtfyMessageDto> messageHandler) {
+        if (messageHandler == null) {
+            throw new IllegalArgumentException("messageHandler cannot be null");
+        }
+
         HttpRequest httpRequest = HttpRequest.newBuilder()
-                // Gör en GET till /mytopic/json, läser varje rad som JSON, tolkar den till NtfyMessageDto
-                // och skickar vidare till messageHandler
                 .GET()
                 .uri(URI.create(hostName + "/mytopic/json"))
                 .build();
 
         http.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofLines())
-                .thenAccept(response -> response.body()
-                        .map(s ->
-                                mapper.readValue(s, NtfyMessageDto.class))
-                        .filter(message -> message.event().equals("message"))
-                        .peek(System.out::println)
-                        .forEach(messageHandler));
+                .thenAccept(response ->
+                        response.body()
+                                .map(s -> {
+                                    try {
+                                        return mapper.readValue(s, NtfyMessageDto.class);
+                                    } catch (Exception e) {
+                                        System.out.println("Error parsing message: " + e.getMessage());
+                                        throw e;
+                                    }
+                                })
+                                .filter(message -> "message".equals(message.event()))
+                                .peek(System.out::println)
+                                .forEach(messageHandler)
+                )
+                .exceptionally(ex -> {
+                    System.out.println("Error receiving messages: " + ex.getMessage());
+                    ex.printStackTrace();
+                    return null;
+                });
     }
 }
